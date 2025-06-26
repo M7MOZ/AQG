@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.route.js';
 import userRoutes from './routes/user.route.js';
 import questionRoutes from './routes/question.route.js';
 import extractRoutes from './routes/extract.route.js';
+import chatRoutes from './routes/chat.route.js';
 import cors from 'cors';
 dotenv.config();
 
@@ -33,6 +34,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/questions', questionRoutes);
 
 app.use('/api/extract', extractRoutes);
+
+app.use('/api/chats', chatRoutes);
 
 app.use((err, req, res, next) => {
     const statusCode = err.status || 500;

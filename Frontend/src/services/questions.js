@@ -1,7 +1,7 @@
 import axios from "./axios";
 
 export const generateQA = async (context) => {
-    const { data } = await axios.post("/questions", { context }, { withCredentials: true });
+    const { data } = await axios.post("/questions", { context });
     return data;
 }
 

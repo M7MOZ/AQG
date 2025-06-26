@@ -33,3 +33,5 @@ Thumbs.db
 
 # Optional: ignore coverage reports if using a test coverage tool
 coverage/
+
+.env

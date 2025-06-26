@@ -1,6 +1,8 @@
-import { lazy, Suspense } from "react"
+import { lazy, Suspense, useEffect } from "react"
 import { Route, Routes, Navigate } from "react-router-dom"
+import ProtectedRoute from "./components/ProtectedRoute"
 function App() {
+  useEffect(() => {}, [])
   const Chat = lazy(() => import("./pages/Chat"))
   const Auth = lazy(() => import("./pages/Auth"))
   const LoginForm = lazy(() => import("./components/LoginForm"))
@@ -13,7 +15,11 @@ function App() {
           <Route index element={<LoginForm />} />
           <Route path="register" element={<RegisterForm />} />
         </Route>
-        <Route path="/chat" element={<Chat />} />
+        <Route path="/chat" element={
+          <ProtectedRoute>
+            <Chat />
+          </ProtectedRoute>
+        } />
       </Routes>
     </Suspense>
   )

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import useRegister from "../hooks/useRegister";
 import { Link } from "react-router-dom";
-
+import { BiSolidHide } from "react-icons/bi";
+import { IoMdEye } from "react-icons/io";
 function RegisterForm() {
   const { mutate, isPending, isError: isServerError, error: serverError } = useRegister();
   
@@ -12,7 +13,11 @@ function RegisterForm() {
   });
 
   const [errors, setErrors] = useState({});
-
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  
+  const togglePasswordVisibility = () => {
+      setIsPasswordVisible((prev) => !prev);
+  };
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -70,28 +75,34 @@ function RegisterForm() {
           {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
         </div>
 
-        <div className="flex flex-col space-y-2 mb-3">
-          <label className="font-medium text-gray-800 text-base sm:text-2xl">كلمة المرور</label>
-          <input
-            name="password"
-            onChange={handleChange}
-            value={form.password}
-            className="outline-none rounded-lg p-3 sm:p-4 bg-gray-100"
-            type="password"
-          />
-          {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+        <div className="flex flex-col space-y-2 mb-6 relative">
+            <label className="font-medium text-gray-800 text-base sm:text-2xl">كلمة المرور</label>
+            <input
+                name="password"
+                onChange={handleChange}
+                value={form.password}
+                className="outline-none rounded-lg p-3 sm:p-4 bg-gray-100"
+                type={isPasswordVisible ? "text" : "password"}
+                />
+                {
+                    isPasswordVisible ?
+                    (<BiSolidHide onClick={togglePasswordVisibility} className="cursor-pointer text-gray-500 hover:text-gray-700 transition-colors absolute top-14 left-5 text-2xl"/>) 
+                    :
+                    (<IoMdEye onClick={togglePasswordVisibility} className="cursor-pointer text-gray-500 hover:text-gray-700 transition-colors absolute top-14 left-5 text-2xl" />)
+                }
+            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
         </div>
         <button
           type="submit"
           disabled={isPending}
-          className={`bg-[#5661f6] p-2 sm:p-3 mt-5 rounded-full w-full text-white text-base sm:text-2xl cursor-pointer ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}  
+          className={`bg-[#5661f6] p-2 sm:p-3 mt-5 rounded-full w-full text-white text-base sm:text-2xl cursor-pointer ${isPending ? 'opacity-50 cursor-not-allowed' : ''}`}  
         >
           {isPending ? 'جاري التسجيل...' : 'انشاء حساب'}
         </button>
         
       </form>
 
-      {(isServerError && serverError?.response?.data?.message === "This Email is already in use") && <p className="text-red-500 text-base sm:text-2xl mt-3">هذا الحساب مستخدم بالفعل</p>}
+      {(isServerError && serverError?.response?.data?.status === 409) && <p className="text-red-500 text-base sm:text-2xl mt-3">هذا البريد مستخدم بالفعل</p>}
       <Link to="/auth" className="mt-10 text-[#5661f6] cursor-pointer">لديك حساب بالفعل؟ تسجيل الدخول</Link>
     </div>
   );

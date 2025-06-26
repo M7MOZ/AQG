@@ -87,7 +87,7 @@ function FileUploader({ type = "image", file, setFile, onExtractText }) {
         </div>
 
         {file && (
-            <div className="relative mt-4 w-15 h-15 md:w-32 md:h-32 border rounded overflow-hidden shadow">
+            <div className="relative mt-4 w-15 h-15 md:w-20 md:h-20 border rounded overflow-hidden shadow">
             <button
                 onClick={removeFile}
                 className="absolute top-0 right-0 text-2xl cursor-pointer bg-white rounded-full text-red-500 hover:bg-red-50 transition-colors"

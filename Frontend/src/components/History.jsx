@@ -5,6 +5,7 @@ import Modal from "react-modal"
 import { RiChatNewLine, RiMenuLine, RiCloseLine } from "react-icons/ri"
 import { Tooltip } from "react-tooltip"
 import HistoryItem from "./HistoryItem"
+import useGetChats from "../hooks/useGetChats"
 
 // Make sure to set the app element for accessibility
 if (typeof window !== "undefined") {
@@ -13,21 +14,10 @@ if (typeof window !== "undefined") {
 
 function History() {
     const [isOpen, setIsOpen] = useState(false)
-
-    const historyLabels = [
-        { id: 1, label: "محادثة حول تطوير الويب" },
-        { id: 2, label: "استفسارات حول React.js" },
-        { id: 3, label: "أسئلة عن واجهات المستخدم" },
-        { id: 4, label: "مناقشة حول أفضل الممارسات" },
-        { id: 5, label: "استشارة حول أدوات التطوير" },
-        { id: 10, label: "نصائح لتحسين الكود" },
-        { id: 7, label: "أسئلة حول أداء التطبيقات" },
-        { id: 9, label: "استكشاف أخطاء وإصلاحها" },
-        { id: 11, label: "نصائح لتحسين الكود" },
-        { id: 6, label: "نقاش عن أنظمة التصميم" },
-        { id: 8, label: "حوار عن تقنيات جديدة" },
-        { id: 12, label: "نصائح لتحسين الكود" },
-    ]
+    const {data: chats, isPending, isError} = useGetChats()
+    const printChats = () => {
+        chats?.map((chat) => {console.log(chat)})
+    }
 
     const openModal = () => setIsOpen(true)
     const closeModal = () => setIsOpen(false)
@@ -71,13 +61,13 @@ function History() {
                     </button>
                 </div>
                 <div className="border-gray-300 h-[87%] w-full">
-                    <div className="flex flex-row justify-between items-center p-2">
+                    <div onClick={printChats} className="flex flex-row justify-between items-center p-2">
                         <span className="text-gray-800">محاداثاتك</span>
                         <span className="text-red-400 cursor-pointer hover:text-red-600 transition-colors">مسح الكل</span>
                     </div>
                     <ul className="overflow-y-auto h-[90%]">
-                        {historyLabels.map((item) => (
-                        <HistoryItem key={item.id} label={item.label} />
+                        {chats?.map((item) => (
+                        <HistoryItem key={item._id} label={item.title} />
                         ))}
                         <Tooltip id="history-tooltip" className="z-50 max-w-[300px]" delayShow={300} />
                     </ul>
@@ -115,12 +105,21 @@ function History() {
                             <span className="text-gray-800">محاداثاتك</span>
                             <span className="text-red-400 cursor-pointer hover:text-red-600 transition-colors">مسح الكل</span>
                         </div>
-                        <ul className="overflow-y-auto h-[90%]">
-                            {historyLabels.map((item) => (
-                                <HistoryItem key={item.id} label={item.label} />
-                            ))}
-                            <Tooltip id="history-tooltip-modal" className="z-50 max-w-[300px]" delayShow={300} />
-                        </ul>
+                        {isPending ? (
+                            <div className="flex justify-center items-center h-full">
+                                <span className="text-gray-500">جارٍ تحميل المحادثات...</span>
+                            </div>
+                        ):
+                        (
+                            <ul className="overflow-y-auto h-[90%]">
+                                {chats?.map((item) => (
+                                    
+                                    <HistoryItem key={item._id} label={item.title} />
+                                ))}
+                                <Tooltip id="history-tooltip-modal" className="z-50 max-w-[300px]" delayShow={300} />
+                            </ul>
+                        )
+                        }
                     </div>
                 </div>
             </Modal>

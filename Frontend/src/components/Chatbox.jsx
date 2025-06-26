@@ -3,6 +3,7 @@ import Tabs from './Tabs';
 import QestionsTypes from './QestionsTypes';
 import FileUploader from './FileUploader';
 import { useGenerate, useGenerateFromFile } from '../hooks/useGenerateQuestions';
+import useSaveChat  from '../hooks/useSaveChat';
 import Results from './Results';
 
 function Chatbox() {
@@ -10,15 +11,35 @@ function Chatbox() {
     const [selectedTab, setSelectedTab] = useState('text');
     const [file, setFile] = useState(null);
     const [generatedQA, setGeneratedQA] = useState([]);
+    console.log('generatedQA', generatedQA);
+    
     const {mutate: generate, isPending: isQuestionGeneratingLoading} = useGenerate();
     const {mutate: generateFromFile, isPending:isUplouading} = useGenerateFromFile();
+    const {mutate: saveChat} = useSaveChat();
     const isLoading = isQuestionGeneratingLoading || isUplouading;
     const handleGenerate = async () => {
         if (selectedTab === 'pdf' || selectedTab === 'text') {
-            generate(inputText,  {onSuccess: (res) => setGeneratedQA(res.qa)});
+            generate(inputText, {
+                onSuccess: (res) => {
+                    setGeneratedQA(res.qa);
+                    saveChat({
+                        title: "new chat",
+                        context: inputText,
+                        questions: res.qa
+                    });
+                }
+            });
             return;
         }
-        generateFromFile({ file, type: selectedTab });
+        generateFromFile(
+            { file, type: selectedTab },
+            {
+                onSuccess: (res) => {
+                    setGeneratedQA(res.qa);
+                    return;
+                }
+            }
+        );
     };
     return (
         <div className="p-8 flex flex-col items-center h-full">
@@ -48,6 +69,7 @@ function Chatbox() {
                     <QestionsTypes/>
                     <button 
                         onClick={handleGenerate}
+                        disabled={isLoading || (selectedTab === 'text' && !inputText.trim()) || (selectedTab !== 'text' && !file)}
                         className="bg-indigo-500 text-white rounded px-4 py-2 text-xl hover:bg-indigo-600 transition-colors"
                         >
                             {isLoading ? 'جاري التحميل...' : 'توليد الأسئلة'}

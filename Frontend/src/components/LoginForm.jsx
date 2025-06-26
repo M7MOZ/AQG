@@ -1,14 +1,22 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import useLogin from "../hooks/useLogin";
 import { Link } from "react-router-dom";
-
+import { BiSolidHide } from "react-icons/bi";
+import { IoMdEye } from "react-icons/io";
+import axios from "../services/axios";
+import { AuthContext } from "../context/AuthContext";
 function LoginForm() {
     const { mutate, isPending, isError: isServerError } = useLogin();
-    
+    const { setUser } = useContext(AuthContext);
     const [form, setForm] = useState({
         email: '',
         password: ''
     });
+
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const togglePasswordVisibility = () => {
+        setIsPasswordVisible((prev) => !prev);
+    };
 
     const [errors, setErrors] = useState({});
 
@@ -36,7 +44,14 @@ function LoginForm() {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validate()) {
-            mutate(form);
+            mutate(form, {onSuccess: async() => {
+                try {
+                    const res = await axios.get('/auth/me'); 
+                    setUser(res.data);
+                } catch (err) {
+                    setUser(null);
+                }
+            }});
         }
     };
 
@@ -57,21 +72,27 @@ function LoginForm() {
                 {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
             </div>
 
-            <div className="flex flex-col space-y-2 mb-6">
+            <div className="flex flex-col space-y-2 mb-6 relative">
                 <label className="font-medium text-gray-800 text-base sm:text-2xl">كلمة المرور</label>
                 <input
                     name="password"
                     onChange={handleChange}
                     value={form.password}
                     className="outline-none rounded-lg p-3 sm:p-4 bg-gray-100"
-                    type="password"
-                />
+                    type={isPasswordVisible ? "text" : "password"}
+                    />
+                    {
+                        isPasswordVisible ?
+                        (<BiSolidHide onClick={togglePasswordVisibility} className="cursor-pointer text-gray-500 hover:text-gray-700 transition-colors absolute top-14 left-5 text-2xl"/>) 
+                        :
+                        (<IoMdEye onClick={togglePasswordVisibility} className="cursor-pointer text-gray-500 hover:text-gray-700 transition-colors absolute top-14 left-5 text-2xl" />)
+                    }
                 {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
             </div>
             <button
                 type="submit"
                 disabled={isPending}
-                className={`bg-[#5661f6] p-2 sm:p-3 mt-5 rounded-full w-full text-white text-base sm:text-2xl cursor-pointer ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}  
+                className={`bg-[#5661f6] p-2 sm:p-3 mt-5 rounded-full w-full text-white text-base sm:text-2xl cursor-pointer ${isPending ? 'opacity-50 cursor-not-allowed' : ''}`}  
             >
                 {isPending ? 'جاري التسجيل...' : 'تسجيل الدخول'}
             </button>

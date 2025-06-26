@@ -6,8 +6,7 @@ const useRegister = () => {
     const navigate = useNavigate()
     const mutation = useMutation({
         mutationFn: login,
-        onSuccess: (data) => {
-            console.log('login successful:', data.token);
+        onSuccess: () => {
             navigate('/chat'); 
         },
         onError: (error) => {

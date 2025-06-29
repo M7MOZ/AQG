@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { getOneChat } from '../services/chatHistory';
 
-const useGetOneChat = () => {
+const useGetOneChat = (chatId) => {
     const query = useQuery({
-        queryFn: getOneChat,
-        queryKey: ['chats'],
+        queryFn: () => getOneChat(chatId),
+        queryKey: ['chat', chatId],
+        enabled: false,
         onSuccess: () => {
             console.log('Chat fetched successfully');
         },

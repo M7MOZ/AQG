@@ -1,8 +1,6 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
 
-function QestionsTypes() {
-    const [selectedOption, setSelectedOption] = useState('essay');
+function QestionsTypes({selectedType, setSelectedType}) {
 
     return (
         <div className="flex gap-4 flex-col md:flex-row">
@@ -11,8 +9,8 @@ function QestionsTypes() {
                 type="radio" 
                 name="option" 
                 value="essay" 
-                checked={selectedOption === 'essay'} 
-                onChange={() => setSelectedOption('essay')}
+                checked={selectedType === 'essay'} 
+                onChange={() => setSelectedType('essay')}
                 className="h-4 w-4"
                 />
                 <span>مقالي</span>
@@ -23,8 +21,8 @@ function QestionsTypes() {
                 type="radio" 
                 name="option" 
                 value="TF" 
-                checked={selectedOption === 'TF'} 
-                onChange={() => setSelectedOption('TF')}
+                checked={selectedType === 'TF'} 
+                onChange={() => setSelectedType('TF')}
                 className="h-4 w-4"
                 />
                 <span>صح ام خطأ</span>
@@ -35,8 +33,8 @@ function QestionsTypes() {
                 type="radio" 
                 name="option" 
                 value="MCQ" 
-                checked={selectedOption === 'MCQ'} 
-                onChange={() => setSelectedOption('MCQ')}
+                checked={selectedType === 'MCQ'} 
+                onChange={() => setSelectedType('MCQ')}
                 className="h-4 w-4"
                 />
                 <span>اختيار من متعدد</span>

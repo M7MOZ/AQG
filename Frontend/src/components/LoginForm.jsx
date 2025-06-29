@@ -1,11 +1,12 @@
 import { useContext, useState } from "react";
 import useLogin from "../hooks/useLogin";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BiSolidHide } from "react-icons/bi";
 import { IoMdEye } from "react-icons/io";
 import axios from "../services/axios";
 import { AuthContext } from "../context/AuthContext";
 function LoginForm() {
+    const Navigate = useNavigate();
     const { mutate, isPending, isError: isServerError } = useLogin();
     const { setUser } = useContext(AuthContext);
     const [form, setForm] = useState({
@@ -45,12 +46,9 @@ function LoginForm() {
         e.preventDefault();
         if (validate()) {
             mutate(form, {onSuccess: async() => {
-                try {
-                    const res = await axios.get('/auth/me'); 
-                    setUser(res.data);
-                } catch (err) {
-                    setUser(null);
-                }
+                const res = await axios.get('/auth/me'); 
+                setUser(res.data);
+                Navigate('/chat');
             }});
         }
     };

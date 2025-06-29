@@ -3,6 +3,7 @@ import axios from 'axios';
 
 const router = express.Router();
 
+//get normal questions
 router.post('/', async (req, res, next) => {
     const { context } = req.body;
 
@@ -34,6 +35,32 @@ router.post('/', async (req, res, next) => {
     }
 });
 
+// get MCQ questions
+router.post('/mcq', async (req, res, next) => {
+    const { context } = req.body;
 
+    try {
+        const qRes = await axios.post('http://127.0.0.1:8000/generate_mcq', { context });
+
+        res.json(qRes.data);
+    } catch (err) {
+        console.error("Error generating MCQs:", err.message);
+        next(err);
+    }
+});
+
+// get True/False questions
+router.post('/true_false', async (req, res, next) => {
+    const { context } = req.body;
+
+    try {
+        const tfRes = await axios.post('http://127.0.0.1:8000/generate_tf', { context });
+        
+        res.json(tfRes.data);
+    } catch (err) {
+        console.error("Error generating T/F questions:", err.message);
+        next(err);
+    }
+});
 
 export default router;

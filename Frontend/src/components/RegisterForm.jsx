@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import useRegister from "../hooks/useRegister";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BiSolidHide } from "react-icons/bi";
 import { IoMdEye } from "react-icons/io";
+import { AuthContext } from "../context/AuthContext";
+import axios from "../services/axios"
 function RegisterForm() {
+  const Navigate = useNavigate();
+  const {setUser} = useContext(AuthContext);
   const { mutate, isPending, isError: isServerError, error: serverError } = useRegister();
   
   const [form, setForm] = useState({
@@ -43,7 +47,12 @@ function RegisterForm() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
-      mutate(form);
+      mutate(form, {onSuccess: async() => {
+        const res = await axios.get('/auth/me'); 
+        setUser(res.data);
+        Navigate('/chat');
+      }});
+      
     }
   };
 

@@ -4,7 +4,7 @@ import { getChats } from '../services/chatHistory';
 const useGetChats = () => {
     const query = useQuery({
         queryFn: getChats,
-        queryKey: ['chats'],
+        queryKey: ['getChats'],
         onSuccess: () => {
             console.log('Chats fetched successfully');
         },

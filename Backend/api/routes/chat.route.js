@@ -1,6 +1,7 @@
 import Chat from "../models/chat.model.js";
 import express from 'express';
 import { verifyToken } from "../controllers/auth.controller.js";
+import axios from 'axios';
 const router = express.Router();
 // POST /api/chats
 router.post("/", verifyToken, async (req, res) => {
@@ -27,12 +28,12 @@ router.get("/:id", verifyToken, async (req, res) => {
     res.json(chat);
 });
 
-router.post("/get_title", async (req, res, next) => {
+router.post("/generate_title", async (req, res, next) => {
     const { context } = req.body;
 
     try {
             const title = await axios.post('http://127.0.0.1:8000/generate_title', { context });
-            res.json(title);
+            res.json(title.data);
         }
         catch(err) {
             console.error("Error generating title:", err.message);

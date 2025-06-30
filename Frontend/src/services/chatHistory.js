@@ -10,8 +10,18 @@ export const getChats = async() => {
     return data;
 }
 
+export const deleteChats = async() => {
+    const { data } = await axios.delete("/chats");
+    return data;
+}
+
 export const getOneChat = async(id) => {
     const { data } = await axios.get(`/chats/${id}`);
+    return data;
+}
+
+export const deleteOneChat = async(id) => {
+    const { data } = await axios.delete(`/chats/${id}`);
     return data;
 }
 

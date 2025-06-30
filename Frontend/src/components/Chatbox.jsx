@@ -15,6 +15,9 @@ function Chatbox() {
     const [selectedType, setSelectedType] = useState('essay');
     const [file, setFile] = useState(null);
     const [generatedQA, setGeneratedQA] = useState(questions || []);
+    const [hasSavedChat, setHasSavedChat] = useState(false);
+    const [lastContext, setLastContext] = useState(context);
+
     
     const {mutate: generate, isPending: isQuestionGeneratingLoading} = useGenerate();
     const {mutate: generateMCQ, isPending: isMCQGeneratingLoading} = useGenerateMCQ();
@@ -32,31 +35,37 @@ function Chatbox() {
 
     const handleGenerate = () => {
         if (selectedTab === 'text' || selectedTab === 'pdf') {
+            const currentContext = inputText;
+            if (currentContext !== lastContext) {
+                setHasSavedChat(false);
+                setLastContext(currentContext);
+            }
             generateFunction(inputText, {
                 onSuccess: (res) => {
-                    setGeneratedQA(selectedType === 'essay' ? res.qa : res.questions);
-                    console.log('Generated Questions:', generatedQA);
+                    setGeneratedQA(res.questions);
                     
-                    generateTitle(inputText, {
-                        onSuccess: (title) => {
-                            setTitle(title.title );
-                            saveChat(
-                                {
-                                    title: title.title || 'محادثة جديدة',
-                                    context: inputText,
-                                    questions: selectedType === 'essay' ? res.qa : res.questions,
-                                },
-                                {
-                                    onSuccess: (chat) => {
-                                        console.log('Chat saved successfully:', chat);
+                    if (!hasSavedChat) {
+                        generateTitle(inputText, {
+                            onSuccess: (title) => {
+                                setTitle(title.title );
+                                saveChat(
+                                    {
+                                        title: title.title || 'محادثة جديدة',
+                                        context: inputText,
+                                        questions: res.questions,
                                     },
-                                    onError: (error) => {
-                                        console.error('Error saving chat:', error);
+                                    {
+                                        onSuccess: (chat) => {
+                                            console.log('Chat saved successfully:', chat);
+                                        },
+                                        onError: (error) => {
+                                            console.error('Error saving chat:', error);
+                                        }
                                     }
-                                }
-                            );
-                        }
-                    });
+                                );
+                            }
+                        });
+                    }
                 }
             });
         } else {
@@ -64,29 +73,36 @@ function Chatbox() {
                 { file, type: selectedTab },
                 {
                     onSuccess: (textFromImage) => {
+                        const currentContext = textFromImage.text;
+                        if (currentContext !== lastContext) {
+                            setHasSavedChat(false);
+                            setLastContext(currentContext);
+                        }
                         generateFunction(textFromImage.text, {
                             onSuccess: (generatedQuestions) => {
-                                setGeneratedQA(selectedType === 'essay' ? generatedQuestions.qa : generatedQuestions.questions);
-                                generateTitle(textFromImage.text, {
-                                    onSuccess: (title) => {
-                                        setTitle(title.title)
-                                        saveChat(
-                                            {
-                                                title: title.title || 'محادثة جديدة',
-                                                context: textFromImage.text,
-                                                questions: selectedType === 'essay' ? generatedQuestions.qa : generatedQuestions.questions,
-                                            },
-                                            {
-                                                onSuccess: (chat) => {
-                                                    console.log('Chat saved successfully:', chat);
+                                setGeneratedQA(generatedQuestions.questions);
+                                if (!hasSavedChat) {
+                                    generateTitle(textFromImage.text, {
+                                        onSuccess: (title) => {
+                                            setTitle(title.title)
+                                            saveChat(
+                                                {
+                                                    title: title.title || 'محادثة جديدة',
+                                                    context: textFromImage.text,
+                                                    questions: generatedQuestions.questions,
                                                 },
-                                                onError: (error) => {
-                                                    console.error('Error saving chat:', error);
+                                                {
+                                                    onSuccess: (chat) => {
+                                                        console.log('Chat saved successfully:', chat);
+                                                    },
+                                                    onError: (error) => {
+                                                        console.error('Error saving chat:', error);
+                                                    }
                                                 }
-                                            }
-                                        );
-                                    }
-                                });
+                                            );
+                                        }
+                                    });
+                                }
                             }
                         });
                     }

@@ -27,7 +27,7 @@ router.post('/', async (req, res, next) => {
         });
         }
 
-        res.json({ qa: qaPairs });
+        res.json({ questions: qaPairs });
 
     } catch (err) {
         console.error("Error generating Q&A:", err.message);

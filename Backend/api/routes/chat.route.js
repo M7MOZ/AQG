@@ -28,6 +28,30 @@ router.get("/:id", verifyToken, async (req, res) => {
     res.json(chat);
 });
 
+// DELETE /api/chats/:id
+router.delete("/:id", verifyToken, async (req, res) => {
+    try {
+        const deletedChat = await Chat.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+        if (!deletedChat) return res.status(404).json({ error: "Chat not found" });
+        res.json({ message: "Chat deleted successfully" });
+    } catch (err) {
+        console.error("Error deleting chat:", err.message);
+        res.status(500).json({ error: "Failed to delete chat" });
+    }
+});
+
+// DELETE /api/chats
+router.delete("/", verifyToken, async (req, res) => {
+    try {
+        await Chat.deleteMany({ userId: req.user.id });
+        res.json({ message: "All chats deleted successfully" });
+    } catch (err) {
+        console.error("Error deleting all chats:", err.message);
+        res.status(500).json({ error: "Failed to delete all chats" });
+    }
+});
+
+
 router.post("/generate_title", async (req, res, next) => {
     const { context } = req.body;
 

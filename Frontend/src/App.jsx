@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect } from "react"
 import { Route, Routes, Navigate } from "react-router-dom"
 import ProtectedRoute from "./components/ProtectedRoute"
+import Spinner from "./UI/Spinner"
 function App() {
   useEffect(() => {}, [])
   const Chat = lazy(() => import("./pages/Chat"))
@@ -8,7 +9,7 @@ function App() {
   const LoginForm = lazy(() => import("./components/LoginForm"))
   const RegisterForm = lazy(() => import("./components/RegisterForm"))
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<Spinner />}>
       <Routes>
         <Route index path="/" element={<Navigate to="/auth" replace />} />
         <Route path="/auth" element={<Auth />}>

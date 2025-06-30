@@ -8,7 +8,8 @@ import HistoryItem from "./HistoryItem"
 import useGetChats from "../hooks/useGetChats"
 import useGetOneChat from "../hooks/useGetOneChat"
 import { AuthContext } from "../context/AuthContext"
-
+import {useDeleteOneChat} from "../hooks/useDeleteOneChat"
+import {useDeleteChats} from "../hooks/useDeleteChats"
 if (typeof window !== "undefined") {
     Modal.setAppElement("#root")
 }
@@ -18,17 +19,22 @@ function History() {
     const [isOpen, setIsOpen] = useState(false)
     const [selectedChatId, setSelectedChatId] = useState(null)
 
-    const { refetch } = useGetOneChat(selectedChatId)
+    const { refetch: getOneChat } = useGetOneChat(selectedChatId)
+    const { mutate: deleteOneChat } = useDeleteOneChat();
+    const { mutate: deleteChats } = useDeleteChats();
     const {data: chats, isPending} = useGetChats()
     const openModal = () => setIsOpen(true)
     const closeModal = () => setIsOpen(false)
 
     const getChat = async(id) => {
         setSelectedChatId(id)
-        const {data} = await refetch()
+        const {data} = await getOneChat()
         setContext(data.context)
         setTitle(data.title)
         setQuestions(data.questions)
+    }
+    const deleteChat = async(id) => {
+        deleteOneChat(id)
     }
     const handleNewChat = () => {
         setContext("")
@@ -77,11 +83,11 @@ function History() {
                 <div className="border-gray-300 h-[87%] w-full">
                     <div className="flex flex-row justify-between items-center p-2">
                         <span className="text-gray-800">محاداثاتك</span>
-                        <span className="text-red-400 cursor-pointer hover:text-red-600 transition-colors">مسح الكل</span>
+                        <span onClick={deleteChats} className="text-red-400 cursor-pointer hover:text-red-600 transition-colors">مسح الكل</span>
                     </div>
                     <ul className="overflow-y-auto h-[90%]">
                         {chats?.map((item) => (
-                        <HistoryItem onClick = {() => getChat(item._id)} key={item._id} label={item.title} />
+                        <HistoryItem onClick = {() => getChat(item._id)} onDelete={() => deleteChat(item._id)} key={item._id} label={item.title} />
                         ))}
                         <Tooltip id="history-tooltip" className="z-50 max-w-[300px]" delayShow={300} />
                     </ul>
@@ -126,7 +132,7 @@ function History() {
                         (
                             <ul className="overflow-y-auto h-[90%]">
                                 {chats?.map((item) => (
-                                    <HistoryItem onClick = {() => getChat(item._id)} key={item._id} label={item.title} />
+                                    <HistoryItem onClick = {() => getChat(item._id)} onDelete={() => deleteChat(item._id)} key={item._id} label={item.title} />
                                 ))}
                                 <Tooltip id="history-tooltip-modal" className="z-50 max-w-[300px]" delayShow={300} />
                             </ul>

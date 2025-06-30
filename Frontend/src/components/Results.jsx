@@ -22,7 +22,7 @@ function Results({ generatedQA, selectedType }) {
         <div className="mt-8 w-full max-w-6xl">
             {generatedQA.length > 0 && (
                 <div className="bg-white rounded-lg shadow-sm p-4">
-                    <h2 className="text-2xl font-semibold mb-4">اسئلة ({selectedType === "MCQ" ? "الاختيار من متعدد" : selectedType === "TF" ? "صح أو خطأ" : "المقال"}):</h2>
+                    <h2 className="text-2xl font-semibold mb-4">الاسئلة:</h2>
                     <ul className="space-y-2">
                         {generatedQA?.map((qa, index) => (
                             <li
@@ -34,7 +34,7 @@ function Results({ generatedQA, selectedType }) {
 
                                     {selectedType === "MCQ" && (
                                         <ul className="mt-1 pl-4 space-y-1 text-sm">
-                                            {qa?.choices.map((choice, i) => (
+                                            {qa?.choices?.map((choice, i) => (
                                                 <li
                                                     key={i}
                                                     className={`py-1 px-2 rounded ${

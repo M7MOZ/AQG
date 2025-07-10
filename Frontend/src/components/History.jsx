@@ -85,12 +85,18 @@ function History() {
                         <span className="text-gray-800">محاداثاتك</span>
                         <span onClick={deleteChats} className="text-red-400 cursor-pointer hover:text-red-600 transition-colors">مسح الكل</span>
                     </div>
-                    <ul className="overflow-y-auto h-[90%]">
-                        {chats?.map((item) => (
-                        <HistoryItem onClick = {() => getChat(item._id)} onDelete={() => deleteChat(item._id)} key={item._id} label={item.title} />
-                        ))}
-                        <Tooltip id="history-tooltip" className="z-50 max-w-[300px]" delayShow={300} />
-                    </ul>
+                    {chats?.length === 0 ? (
+                        <div className="flex justify-center items-center h-[81%]">
+                            <span className="text-gray-500">لا توجد محادثات حتى الآن</span>
+                        </div> ) : (
+                            <ul className="overflow-y-auto h-[90%]">
+                                {chats?.map((item) => (
+                                <HistoryItem onClick = {() => getChat(item._id)} onDelete={() => deleteChat(item._id)} key={item._id} label={item.title} />
+                                ))}
+                                <Tooltip id="history-tooltip" className="z-50 max-w-[300px]" delayShow={300} />
+                            </ul>
+                        )       
+                    }
                 </div>
             </div>
 

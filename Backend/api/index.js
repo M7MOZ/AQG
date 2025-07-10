@@ -3,7 +3,6 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.route.js';
-import userRoutes from './routes/user.route.js';
 import questionRoutes from './routes/question.route.js';
 import extractRoutes from './routes/extract.route.js';
 import chatRoutes from './routes/chat.route.js';
@@ -29,13 +28,11 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRoutes);
 
-app.use('/api/users', userRoutes);
-
 app.use('/api/questions', questionRoutes);
 
-app.use('/api/extract', extractRoutes);
-
 app.use('/api/chats', chatRoutes);
+
+app.use('/api/extract', extractRoutes);
 
 app.use((err, req, res, next) => {
     const statusCode = err.status || 500;

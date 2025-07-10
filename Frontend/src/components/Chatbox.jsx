@@ -16,7 +16,7 @@ function Chatbox() {
     const [file, setFile] = useState(null);
     const [generatedQA, setGeneratedQA] = useState(questions || []);
     const [hasSavedChat, setHasSavedChat] = useState(false);
-    const [lastContext, setLastContext] = useState(context);
+    const [lastContext, setLastContext] = useState("");
 
     
     const {mutate: generate, isPending: isQuestionGeneratingLoading} = useGenerate();
@@ -35,16 +35,17 @@ function Chatbox() {
 
     const handleGenerate = () => {
         if (selectedTab === 'text' || selectedTab === 'pdf') {
-            const currentContext = inputText;
-            if (currentContext !== lastContext) {
+        
+            if (inputText !== lastContext) {
                 setHasSavedChat(false);
-                setLastContext(currentContext);
+                setLastContext(inputText);
             }
             generateFunction(inputText, {
                 onSuccess: (res) => {
                     setGeneratedQA(res.questions);
                     
                     if (!hasSavedChat) {
+                        setHasSavedChat(true);
                         generateTitle(inputText, {
                             onSuccess: (title) => {
                                 setTitle(title.title );

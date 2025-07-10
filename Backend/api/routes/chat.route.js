@@ -3,6 +3,13 @@ import express from 'express';
 import { verifyToken } from "../controllers/auth.controller.js";
 import axios from 'axios';
 const router = express.Router();
+
+// GET /api/chats
+router.get("/", verifyToken, async (req, res) => {
+    const chats = await Chat.find({ userId: req.user.id }).sort({ createdAt: -1 });
+    res.json(chats);
+});
+
 // POST /api/chats
 router.post("/", verifyToken, async (req, res) => {
     const { title, context, questions } = req.body;
@@ -14,30 +21,11 @@ router.post("/", verifyToken, async (req, res) => {
         res.status(500).json({ error: "Failed to save chat" });
     }
 });
-
-// GET /api/chats
-router.get("/", verifyToken, async (req, res) => {
-    const chats = await Chat.find({ userId: req.user.id }).sort({ createdAt: -1 });
-    res.json(chats);
-});
-
 // GET /api/chats/:id
 router.get("/:id", verifyToken, async (req, res) => {
     const chat = await Chat.findOne({ _id: req.params.id, userId: req.user.id });
     if (!chat) return res.status(404).json("Chat not found");
     res.json(chat);
-});
-
-// DELETE /api/chats/:id
-router.delete("/:id", verifyToken, async (req, res) => {
-    try {
-        const deletedChat = await Chat.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
-        if (!deletedChat) return res.status(404).json({ error: "Chat not found" });
-        res.json({ message: "Chat deleted successfully" });
-    } catch (err) {
-        console.error("Error deleting chat:", err.message);
-        res.status(500).json({ error: "Failed to delete chat" });
-    }
 });
 
 // DELETE /api/chats
@@ -50,6 +38,18 @@ router.delete("/", verifyToken, async (req, res) => {
         res.status(500).json({ error: "Failed to delete all chats" });
     }
 });
+// DELETE /api/chats/:id
+router.delete("/:id", verifyToken, async (req, res) => {
+    try {
+        const deletedChat = await Chat.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+        if (!deletedChat) return res.status(404).json({ error: "Chat not found" });
+        res.json({ message: "Chat deleted successfully" });
+    } catch (err) {
+        console.error("Error deleting chat:", err.message);
+        res.status(500).json({ error: "Failed to delete chat" });
+    }
+});
+
 
 
 router.post("/generate_title", async (req, res, next) => {

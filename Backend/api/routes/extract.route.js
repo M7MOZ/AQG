@@ -11,7 +11,7 @@ router.post('/image', upload.single('file'), async (req, res, next) => {
     try {
         const imagePath = req.file.path;
 
-        const result = await Tesseract.recognize(imagePath, 'eng+ara', {
+        const result = await Tesseract.recognize(imagePath, 'ara', {
         logger: m => console.log(m)
         });
 

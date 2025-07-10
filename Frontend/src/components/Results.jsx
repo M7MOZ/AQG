@@ -10,6 +10,7 @@ import { IoMdEye } from "react-icons/io";
  */
 function Results({ generatedQA, selectedType }) {
     const [showAnswers, setShowAnswers] = useState({});
+    
     const toggleShowAnswers = (index) => {
         setShowAnswers((prev) => ({
             ...prev,
@@ -17,6 +18,7 @@ function Results({ generatedQA, selectedType }) {
         }));
     };
 
+    const abgd = ["أ", "ب", "ج", "د"]
 
     return (
         <div className="mt-8 w-full max-w-6xl">
@@ -43,7 +45,7 @@ function Results({ generatedQA, selectedType }) {
                                                             : ''
                                                     }`}
                                                 >
-                                                    {String.fromCharCode(0x0623 + i)}) {choice}
+                                                    {abgd[i]} ) {choice}
                                                 </li>
                                             ))}
                                         </ul>

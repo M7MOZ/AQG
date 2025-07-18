@@ -81,7 +81,9 @@ npm run dev   # or use nodemon / dev script
 ### Model References
 
 - [Questions Generation Model (AraT5)](https://www.kaggle.com/models/mohammed237/arat5-base-final)
-- [Question Answering Model]()
+
+- For more details and experiments on the question model, visit the dedicated repository: [Question Model Repository](https://github.com/Mohammed2372/Arabic-Question-Generation)
+<!-- - [Question Answering Model]() -->
 
 ### Data References
 
